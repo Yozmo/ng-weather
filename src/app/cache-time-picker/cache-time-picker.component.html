@@ -1,0 +1,21 @@
+<div class="well">
+  <h2>Cache time picker</h2>
+  <p>Component used only for testing purposes to choose the cache time (hours / seconds)</p>
+  <br />
+
+  <form [formGroup]="cacheTimePickerForm">
+    <div>Select the time unit</div>
+
+    <select class="form-control" formControlName="unitTime">
+      @for (unitTime of unitTimes; track unitTime) {
+        <option [ngValue]="unitTime">
+          {{ unitTime }}
+        </option>
+      }
+    </select>
+
+    <br />
+
+    <input type="text" placeholder="Time amount" class="form-control" formControlName="amount" />
+  </form>
+</div>

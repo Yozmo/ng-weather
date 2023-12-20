@@ -1,0 +1,20 @@
+<nav class="tabs__navigation">
+  <ul class="tabs__list">
+    @for (tabComponent of tabComponents; track tabComponent.tabId) {
+      <li class="tabs__item" [class.is-active-tab]="tabComponent.isActive">
+        <a class="tabs__header" [class.is-active]="tabComponent.isActive">
+          <div class="tabs__header__title" (click)="onTabClick(tabComponent.tabId)">
+            {{ tabComponent.tabTitle }}
+          </div>
+          @if (withAction) {
+            <div (click)="actionClicked(tabComponent.tabId)">x</div>
+          }
+        </a>
+      </li>
+    }
+  </ul>
+</nav>
+
+<div class="tabs__content">
+  <ng-content></ng-content>
+</div>

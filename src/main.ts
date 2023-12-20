@@ -1,11 +1,29 @@
-import { enableProdMode } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import {enableProdMode, importProvidersFrom} from '@angular/core';
 
-import { AppModule } from './app/app.module';
-import { environment } from './environments/environment';
+import {environment} from './environments/environment';
+import {AppComponent} from './app/app.component';
+import {ServiceWorkerModule} from '@angular/service-worker';
+import {routing} from './app/app.routing';
+import {RouterModule} from '@angular/router';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {BrowserModule, bootstrapApplication} from '@angular/platform-browser';
+import {cacheResponseInterceptor} from './app/interceptors/cache-response.interceptor';
+import {provideHttpClient, withInterceptors} from '@angular/common/http';
 
 if (environment.production) {
   enableProdMode();
 }
 
-platformBrowserDynamic().bootstrapModule(AppModule);
+bootstrapApplication(AppComponent, {
+  providers: [
+    importProvidersFrom(
+      BrowserModule,
+      FormsModule,
+      ReactiveFormsModule,
+      RouterModule,
+      routing,
+      ServiceWorkerModule.register('/ngsw-worker.js', {enabled: environment.production}),
+    ),
+    provideHttpClient(withInterceptors([cacheResponseInterceptor])),
+  ],
+});

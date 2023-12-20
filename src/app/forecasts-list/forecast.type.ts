@@ -5,6 +5,10 @@ export interface Forecast {
     cnt:     number;
     list:    List[];
 }
+export interface ForecastWithZip {
+    zip: string;
+    data: Forecast;
+}
 
 export interface City {
     id:         number;

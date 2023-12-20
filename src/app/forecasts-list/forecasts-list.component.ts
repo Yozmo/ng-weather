@@ -1,23 +1,30 @@
-import { Component } from '@angular/core';
-import {WeatherService} from '../weather.service';
-import {ActivatedRoute} from '@angular/router';
-import {Forecast} from './forecast.type';
+import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
+import {toSignal} from '@angular/core/rxjs-interop';
+import {switchMap, tap} from 'rxjs';
+import {WeatherService} from '../services/weather.service';
+import {ActivatedRoute, RouterLink} from '@angular/router';
+import {NgIf, NgFor, DecimalPipe, DatePipe} from '@angular/common';
 
 @Component({
   selector: 'app-forecasts-list',
   templateUrl: './forecasts-list.component.html',
-  styleUrls: ['./forecasts-list.component.css']
+  styleUrls: ['./forecasts-list.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [RouterLink, DecimalPipe, DatePipe],
 })
 export class ForecastsListComponent {
+  private route = inject(ActivatedRoute);
+  private wheatherService = inject(WeatherService);
 
-  zipcode: string;
-  forecast: Forecast;
+  forecast = toSignal(
+    this.route.params.pipe(
+      switchMap((params) => this.wheatherService.getForecast(params['zipcode'])),
+    ),
+    {initialValue: null},
+  );
 
-  constructor(protected weatherService: WeatherService, route : ActivatedRoute) {
-    route.params.subscribe(params => {
-      this.zipcode = params['zipcode'];
-      weatherService.getForecast(this.zipcode)
-        .subscribe(data => this.forecast = data);
-    });
+  getWeatherIcon(id: number): string {
+    return this.wheatherService.getWeatherIcon(id);
   }
 }
